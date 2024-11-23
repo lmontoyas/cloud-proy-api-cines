@@ -1,5 +1,6 @@
 import boto3
 import json
+import os
 
 def lambda_handler(event, context):
     try:
@@ -7,7 +8,6 @@ def lambda_handler(event, context):
 
         # Extraer valores del cuerpo
         tenant_id = event['tenant_id']
-        pais = event['pais']
         departamento = event['departamento']
         provincia = event['provincia']
         distrito = event['distrito']
@@ -16,15 +16,18 @@ def lambda_handler(event, context):
         contacto = event['contacto']
         horario_apertura = event['horario_apertura']
         horario_cierre = event['horario_cierre']
+        imagen = event['imagen']
 
-        if not tenant_id and not pais and not departamento and not provincia and not distrito and not nombre and not direccion and not contacto and not horario_apertura and not horario_cierre:
+        tabla_cines = os.environ["TABLE_NAME_CINES"]
+
+        if not tenant_id and not departamento and not provincia and not distrito and not nombre and not direccion and not contacto and not horario_apertura and not horario_cierre and not imagen:
             return {
                     'statusCode': 400,
                     'status': 'Bad Request - Faltan datos por completar'
                 }
 
         # Concatenar los valores de pais, departamento y distrito para formar el campo ordenamiento
-        ordenamiento = f"{pais}#{departamento}#{provincia}#{distrito}"
+        ordenamiento = f"{departamento}#{provincia}#{distrito}"
 
         # Proteger el Lambda con autenticación de token
         token = event['headers'].get('Authorization', None)
@@ -51,7 +54,7 @@ def lambda_handler(event, context):
 
         # Conexión a DynamoDB y creación del nuevo registro
         dynamodb = boto3.resource('dynamodb')
-        table = dynamodb.Table('tp_cines')  # Reemplaza con el nombre real de tu tabla
+        table = dynamodb.Table(tabla_cines)
 
         # Insertar el nuevo registro en la tabla
         response = table.put_item(
@@ -62,7 +65,8 @@ def lambda_handler(event, context):
                 'direccion': direccion,
                 'contacto': contacto,
                 'horario_apertura': horario_apertura,
-                'horario_cierre': horario_cierre
+                'horario_cierre': horario_cierre,
+                'imagen': imagen
             }
         )
 

@@ -31,6 +31,15 @@ functions:
           method: post
           cors: true
           integration: lambda
+  modificar_cine:
+    handler: LambdaModificarCine.lambda_handler
+    memorySize: 1024
+    events:
+      - https:
+          path: /cine/modificar
+          method: put
+          cors: true
+          integration: lambda
 
 resources:
   Resources:

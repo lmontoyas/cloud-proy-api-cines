@@ -26,7 +26,7 @@ functions:
     handler: LambdaBuscarCine.lambda_handler
     memorySize: 1024
     events:
-      - https:
+      - http:
           path: /cine/buscar
           method: post
           cors: true
@@ -35,7 +35,7 @@ functions:
     handler: LambdaModificarCine.lambda_handler
     memorySize: 1024
     events:
-      - https:
+      - http:
           path: /cine/modificar
           method: put
           cors: true

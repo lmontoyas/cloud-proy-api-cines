@@ -14,13 +14,11 @@ def lambda_handler(event, context):
         nombre = event['nombre']
         direccion = event['direccion']
         contacto = event['contacto']
-        horario_apertura = event['horario_apertura']
-        horario_cierre = event['horario_cierre']
         imagen = event['imagen']
 
         tabla_cines = os.environ["TABLE_NAME_CINES"]
 
-        if not tenant_id and not departamento and not provincia and not distrito and not nombre and not direccion and not contacto and not horario_apertura and not horario_cierre and not imagen:
+        if not tenant_id and not departamento and not provincia and not distrito and not nombre and not direccion and not contacto and not imagen:
             return {
                     'statusCode': 400,
                     'status': 'Bad Request - Faltan datos por completar'
@@ -64,8 +62,6 @@ def lambda_handler(event, context):
                 'nombre': nombre,
                 'direccion': direccion,
                 'contacto': contacto,
-                'horario_apertura': horario_apertura,
-                'horario_cierre': horario_cierre,
                 'imagen': imagen
             }
         )

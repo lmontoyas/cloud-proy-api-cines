@@ -40,10 +40,12 @@ def lambda_handler(event, context):
                 'status': 'Unauthorized - Falta el token de autorización'
             }
 
+        lambda_name = os.environ.get('LAMBDA_VALIDAR_TOKEN')
+
         lambda_client = boto3.client('lambda')
         payload_string = json.dumps({"token": token})
         invoke_response = lambda_client.invoke(
-            FunctionName="ValidarTokenAcceso",
+            FunctionName=lambda_name,
             InvocationType='RequestResponse',
             Payload=payload_string
         )

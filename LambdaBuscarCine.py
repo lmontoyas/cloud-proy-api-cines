@@ -20,12 +20,13 @@ def lambda_handler(event, context):
             body = event['body']
 
         # Extraer valores del cuerpo
+        # Extraer valores del cuerpo con valores predeterminados para campos opcionales
         tenant_id = body['tenant_id']
-        departamento = body['departamento']
-        provincia = body['provincia']
-        distrito = body['distrito']
+        departamento = body.get('departamento', "") 
+        provincia = body.get('provincia', "")       
+        distrito = body.get('distrito', "")         
 
-        
+
         tabla_cines = os.environ["TABLE_NAME_CINES"]
         lambda_name = os.environ['LAMBDA_VALIDAR_TOKEN']
 

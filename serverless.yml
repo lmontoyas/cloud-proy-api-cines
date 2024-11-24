@@ -29,12 +29,7 @@ functions:
     events:
       - http:
           path: /cine/buscar
-          method: get
-          queryStringParameters:
-            tenant_id: true
-            departamento: true
-            provincia: true
-            distrito: true
+          method: post
           cors: true
           integration: lambda
   modificar_cine:

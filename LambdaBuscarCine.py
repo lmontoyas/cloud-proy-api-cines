@@ -16,12 +16,15 @@ def lambda_handler(event, context):
 
         # Extraer parámetros de búsqueda del evento
         query_params = event.get('queryStringParameters', {})
+        print("queryStringParameters:", query_params)  # Imprimir los parámetros de la URL
+
         tenant_id = query_params.get('tenant_id', None)
         departamento = query_params.get('departamento', None)
         provincia = query_params.get('provincia', None)
         distrito = query_params.get('distrito', None)
 
-        print(tenant_id)
+        print("Parámetros extraídos:", tenant_id, departamento, provincia, distrito)  # Imprimir los valores extraídos
+
         tabla_cines = os.environ["TABLE_NAME_CINES"]
         lambda_name = os.environ['LAMBDA_VALIDAR_TOKEN']
 

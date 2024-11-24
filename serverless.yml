@@ -30,6 +30,11 @@ functions:
       - http:
           path: /cine/buscar
           method: get
+          queryStringParameters:
+            tenant_id: true
+            departamento: true
+            provincia: true
+            distrito: true
           cors: true
           integration: lambda
   modificar_cine:

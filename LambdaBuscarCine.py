@@ -14,10 +14,25 @@ def lambda_handler(event, context):
                 'status': 'Unauthorized - Falta el token de autorización'
             }
 
+        # Extraer parámetros de búsqueda del evento
+        query_params = event.get('queryStringParameters', {})
+        tenant_id = query_params.get('tenant_id', None)
+        departamento = query_params.get('departamento', None)
+        provincia = query_params.get('provincia', None)
+        distrito = query_params.get('distrito', None)
+
+        tabla_cines = os.environ["TABLE_NAME_CINES"]
+        lambda_name = os.environ.get('LAMBDA_VALIDAR_TOKEN')
+
         lambda_client = boto3.client('lambda')
-        payload_string = json.dumps({"token": token})
+        payload_string = json.dumps(
+            {
+                "tenant_id": tenant_id,
+                "token": token
+                })
+
         invoke_response = lambda_client.invoke(
-            FunctionName="ValidarTokenAcceso",
+            FunctionName=lambda_name,
             InvocationType='RequestResponse',
             Payload=payload_string
         )
@@ -28,15 +43,6 @@ def lambda_handler(event, context):
                 'statusCode': 403,
                 'status': 'Forbidden - Acceso NO Autorizado'
             }
-
-        # Extraer parámetros de búsqueda del evento
-        query_params = event.get('queryStringParameters', {})
-        tenant_id = query_params.get('tenant_id', None)
-        departamento = query_params.get('departamento', None)
-        provincia = query_params.get('provincia', None)
-        distrito = query_params.get('distrito', None)
-
-        tabla_cines = os.environ["TABLE_NAME_CINES"]
 
         # Conexión a DynamoDB
         dynamodb = boto3.resource('dynamodb')

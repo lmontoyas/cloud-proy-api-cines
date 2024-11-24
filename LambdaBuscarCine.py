@@ -22,7 +22,7 @@ def lambda_handler(event, context):
         distrito = query_params.get('distrito', None)
 
         tabla_cines = os.environ["TABLE_NAME_CINES"]
-        lambda_name = os.environ.get('LAMBDA_VALIDAR_TOKEN')
+        lambda_name = os.environ['LAMBDA_VALIDAR_TOKEN']
 
         lambda_client = boto3.client('lambda')
         payload_string = json.dumps(
@@ -48,46 +48,22 @@ def lambda_handler(event, context):
         dynamodb = boto3.resource('dynamodb')
         table = dynamodb.Table(tabla_cines)
 
-        # Buscar por tenant_id (método query)
-        if tenant_id:
-            key_condition_expression = "tenant_id = :tenant_id"
-            expression_attribute_values = {":tenant_id": tenant_id}
+        # Construir la clave de ordenamiento
+        ordenamiento_filter = f"{departamento or ''}#{provincia or ''}#{distrito or ''}".strip("#")
 
-            if departamento or provincia or distrito:
-                # Agregar filtro de ordenamiento si hay otros parámetros
-                ordenamiento_filter = f"{departamento or ''}#{provincia or ''}#{distrito or ''}".strip("#")
-                if ordenamiento_filter:
-                    key_condition_expression += " AND begins_with(ordenamiento, :ordenamiento)"
-                    expression_attribute_values[":ordenamiento"] = ordenamiento_filter
+        # Configurar las expresiones para el Query
+        key_condition_expression = "tenant_id = :tenant_id"
+        expression_attribute_values = {":tenant_id": tenant_id}
 
-            response = table.query(
-                KeyConditionExpression=key_condition_expression,
-                ExpressionAttributeValues=expression_attribute_values
-            )
+        if ordenamiento_filter:
+            key_condition_expression += " AND begins_with(cine_id, :cine_id)"
+            expression_attribute_values[":cine_id"] = ordenamiento_filter
 
-        else:
-            # Buscar sin tenant_id (método scan)
-            filter_expression = []
-            expression_attribute_values = {}
-
-            if departamento:
-                filter_expression.append("begins_with(ordenamiento, :departamento)")
-                expression_attribute_values[":departamento"] = departamento
-            if provincia:
-                filter_expression.append("contains(ordenamiento, :provincia)")
-                expression_attribute_values[":provincia"] = f"#{provincia}#"
-            if distrito:
-                filter_expression.append("ends_with(ordenamiento, :distrito)")
-                expression_attribute_values[":distrito"] = f"#{distrito}"
-
-            if filter_expression:
-                filter_expression = " AND ".join(filter_expression)
-                response = table.scan(
-                    FilterExpression=filter_expression,
-                    ExpressionAttributeValues=expression_attribute_values
-                )
-            else:
-                response = table.scan()
+        # Ejecutar la consulta Query
+        response = table.query(
+            KeyConditionExpression=key_condition_expression,
+            ExpressionAttributeValues=expression_attribute_values
+        )
 
         # Retornar los resultados
         return {

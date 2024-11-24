@@ -43,7 +43,12 @@ def lambda_handler(event, context):
         lambda_name = os.environ.get('LAMBDA_VALIDAR_TOKEN')
 
         lambda_client = boto3.client('lambda')
-        payload_string = json.dumps({"token": token})
+        payload_string = json.dumps(
+            {
+                "tenant_id": tenant_id,
+                "token": token
+                })
+        
         invoke_response = lambda_client.invoke(
             FunctionName=lambda_name,
             InvocationType='RequestResponse',

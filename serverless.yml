@@ -29,7 +29,7 @@ functions:
     events:
       - http:
           path: /cine/buscar
-          method: post
+          method: get
           cors: true
           integration: lambda
   modificar_cine:

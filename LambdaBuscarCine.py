@@ -21,6 +21,7 @@ def lambda_handler(event, context):
         provincia = query_params.get('provincia', None)
         distrito = query_params.get('distrito', None)
 
+        print(tenant_id)
         tabla_cines = os.environ["TABLE_NAME_CINES"]
         lambda_name = os.environ['LAMBDA_VALIDAR_TOKEN']
 
@@ -49,7 +50,7 @@ def lambda_handler(event, context):
         table = dynamodb.Table(tabla_cines)
 
         # Construir la clave de ordenamiento
-        ordenamiento_filter = f"{departamento or ''}#{provincia or ''}#{distrito or ''}".strip("#")
+        ordenamiento_filter = f"{departamento}#{provincia}#{distrito}"
 
         # Configurar las expresiones para el Query
         key_condition_expression = "tenant_id = :tenant_id"

@@ -6,7 +6,7 @@ def lambda_handler(event, context):
     try:
         print(event)
 
-        if isinstance(event['body', str]):
+        if isinstance(event['body'], str):
             body = json.loads(event['body'])
         else:
             body = event['body']

@@ -11,7 +11,7 @@ provider:
     role: arn:aws:iam::087688905490:role/LabRole
   environment:
     TABLE_NAME_CINES: ${sls:stage}-tp_cines
-    LAMBDA_VALIDAR_TOKEN: ${sls:stage}-api-usuarios-validar_token
+    LAMBDA_VALIDAR_TOKEN: api-usuarios-${sls:stage}-validar_token
 
 functions:
   crear_cine:

@@ -6,15 +6,20 @@ def lambda_handler(event, context):
     try:
         print(event)
 
+        if isinstance(event['body', str]):
+            body = json.loads(event['body'])
+        else:
+            body = event['body']
+
         # Extraer valores del cuerpo
-        tenant_id = event['tenant_id']
-        departamento = event['departamento']
-        provincia = event['provincia']
-        distrito = event['distrito']
-        nombre = event['nombre']
-        direccion = event['direccion']
-        contacto = event['contacto']
-        imagen = event['imagen']
+        tenant_id = body['tenant_id']
+        departamento = body['departamento']
+        provincia = body['provincia']
+        distrito = body['distrito']
+        nombre = body['nombre']
+        direccion = body['direccion']
+        contacto = body['contacto']
+        imagen = body['imagen']
 
         tabla_cines = os.environ["TABLE_NAME_CINES"]
 

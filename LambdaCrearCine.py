@@ -30,7 +30,7 @@ def lambda_handler(event, context):
                 }
 
         # Concatenar los valores de pais, departamento y distrito para formar el campo ordenamiento
-        ordenamiento = f"{departamento}#{provincia}#{distrito}"
+        cine_id = f"{departamento}#{provincia}#{distrito}"
 
         # Proteger el Lambda con autenticación de token
         token = event['headers'].get('Authorization', None)
@@ -70,7 +70,7 @@ def lambda_handler(event, context):
         response = table.put_item(
             Item={
                 'tenant_id': tenant_id,
-                'ordenamiento': ordenamiento,
+                'cine_id': cine_id,
                 'nombre': nombre,
                 'direccion': direccion,
                 'contacto': contacto,

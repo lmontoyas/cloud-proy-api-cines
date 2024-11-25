@@ -39,7 +39,7 @@ def lambda_handler(event, context):
                 'status': 'Bad Request - Faltan campos requeridos'
             }
 
-        # Concatenar los valores de departamento, provincia y distrito para formar el campo ordenamiento
+        # Concatenar los valores de departamento, provincia y distrito para formar el campo cine_id
         cine_id = f"{departamento}#{provincia}#{distrito}"
 
         lambda_client = boto3.client('lambda')
@@ -69,7 +69,7 @@ def lambda_handler(event, context):
         existing_item = table.get_item(
             Key={
                 'tenant_id': tenant_id,
-                'ordenamiento': cine_id
+                'cine_id': cine_id
             }
         )
         if 'Item' not in existing_item:
@@ -77,6 +77,26 @@ def lambda_handler(event, context):
                 'statusCode': 404,
                 'status': 'Not Found - El cine especificado no existe'
             }
+
+        # Realizar la consulta Query
+        query_response = table.query(
+            KeyConditionExpression="tenant_id = :tenant_id AND begins_with(cine_id, :cine_id)",
+            ExpressionAttributeValues={
+                ":tenant_id": tenant_id,
+                ":cine_id": cine_id
+            }
+        )
+
+        # Verificar si se encontró al menos un ítem
+        items = query_response.get('Items', [])
+        if not items:
+            return {
+                'statusCode': 404,
+                'status': 'Not Found - No se encontraron cines con los criterios especificados'
+            }
+
+        # Tomar el primer ítem encontrado (en este caso asumimos que es único)
+        item_to_update = items[0]
 
         # Construir la expresión de actualización
         update_expression = []
@@ -104,7 +124,7 @@ def lambda_handler(event, context):
         response = table.update_item(
             Key={
                 'tenant_id': tenant_id,
-                'ordenamiento': cine_id
+                'cine_id': item_to_update['cine_id']
             },
             UpdateExpression="SET " + ", ".join(update_expression),
             ExpressionAttributeValues=expression_attribute_values,
